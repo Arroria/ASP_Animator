@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="_main">
+      <UniqueIdentifier>{7b596903-edbe-40f2-896a-6608e1ef8337}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="_main\_unmanageable">
+      <UniqueIdentifier>{20bcf61e-687b-4743-b482-326eb791bad9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="_main\_unmanageable\리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="_main\main0">
+      <UniqueIdentifier>{604c64db-cb9f-4c52-8048-4e55ef9f4a46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="singleton">
+      <UniqueIdentifier>{a9bd674e-6f91-4bd5-99fb-a149a2b3bc29}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="targetver.h">
+      <Filter>_main\_unmanageable</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>_main\_unmanageable</Filter>
+    </ClInclude>
+    <ClInclude Include="MainLoop.h">
+      <Filter>_main</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>_main\main0</Filter>
+    </ClInclude>
+    <ClInclude Include="ProcessManager.h">
+      <Filter>_main\main0</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>_main\main0</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleDrawer.h">
+      <Filter>singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="Singleton.h">
+      <Filter>singleton</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ASP_Animator.rc">
+      <Filter>_main\_unmanageable\리소스 파일</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="small.ico">
+      <Filter>_main\_unmanageable\리소스 파일</Filter>
+    </Image>
+    <Image Include="ASP_Animator.ico">
+      <Filter>_main\_unmanageable\리소스 파일</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="MainLoop.cpp">
+      <Filter>_main</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>_main\main0</Filter>
+    </ClCompile>
+    <ClCompile Include="ProcessManager.cpp">
+      <Filter>_main\main0</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>_main\main0</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleDrawer.cpp">
+      <Filter>singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Singleton.cpp">
+      <Filter>singleton</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
