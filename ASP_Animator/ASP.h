@@ -18,10 +18,17 @@ struct ASP
 	ASP() : tex(nullptr) { ZeroMemory(&info, sizeof(D3DXIMAGE_INFO)); }
 };
 
-
-class ASP_Reader
+#include <filesystem>
+#include "Singleton.h"
+class ASP_Reader :
+	public Singleton<ASP_Reader>
 {
 private:
+	std::map<std::wstring, ASP*> m_asp;
+
+public:
+	ASP * RegistASP(const std::wstring& key, const std::experimental::filesystem::path& texPath, const std::experimental::filesystem::path& aspPath);
+	ASP * FindASP(const std::wstring& key);
 
 public:
 	ASP_Reader();
