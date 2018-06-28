@@ -43,6 +43,7 @@
     <ClInclude Include="Singleton.h">
       <Filter>singleton</Filter>
     </ClInclude>
+    <ClInclude Include="ASP.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ASP_Animator.rc">
@@ -76,5 +77,6 @@
     <ClCompile Include="Singleton.cpp">
       <Filter>singleton</Filter>
     </ClCompile>
+    <ClCompile Include="ASP.cpp" />
   </ItemGroup>
 </Project>

@@ -9,6 +9,11 @@ SimpleDrawer::SimpleDrawer()
 	m_texPlane[2] = PNT_Vertex(D3DXVECTOR3(-0.5f, -0.5f, 0), D3DXVECTOR3(0, 0, -1), D3DXVECTOR2(0, 1));
 	m_texPlane[3] = PNT_Vertex(D3DXVECTOR3(+0.5f, -0.5f, 0), D3DXVECTOR3(0, 0, -1), D3DXVECTOR2(1, 1));
 
+	m_texUVPlane[0] = PNT_Vertex(D3DXVECTOR3(-0.5f, +0.5f, 0), D3DXVECTOR3(0, 0, -1), D3DXVECTOR2(0, 0));
+	m_texUVPlane[1] = PNT_Vertex(D3DXVECTOR3(+0.5f, +0.5f, 0), D3DXVECTOR3(0, 0, -1), D3DXVECTOR2(1, 0));
+	m_texUVPlane[2] = PNT_Vertex(D3DXVECTOR3(-0.5f, -0.5f, 0), D3DXVECTOR3(0, 0, -1), D3DXVECTOR2(0, 1));
+	m_texUVPlane[3] = PNT_Vertex(D3DXVECTOR3(+0.5f, -0.5f, 0), D3DXVECTOR3(0, 0, -1), D3DXVECTOR2(1, 1));
+
 	
 	m_colorPlane[0] = PC_Vertex(D3DXVECTOR3(-0.5f, +0.5f, 0), D3DXCOLOR(0, 0, 0, 1));
 	m_colorPlane[1] = PC_Vertex(D3DXVECTOR3(+0.5f, +0.5f, 0), D3DXCOLOR(0, 0, 0, 1));
@@ -36,6 +41,17 @@ HRESULT SimpleDrawer::DrawTexPlane(LPDIRECT3DDEVICE9 device)
 {
 	PNT_Vertex::SetFVF(device);
 	return device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, &m_texPlane[0], sizeof(PNT_Vertex));
+}
+
+HRESULT SimpleDrawer::DrawTexPlane(LPDIRECT3DDEVICE9 device, float minU, float minV, float maxU, float maxV)
+{
+	m_texUVPlane[0].t.x = m_texUVPlane[2].t.x = minU;
+	m_texUVPlane[1].t.x = m_texUVPlane[3].t.x = maxU;
+	m_texUVPlane[0].t.y = m_texUVPlane[1].t.y = minV;
+	m_texUVPlane[2].t.y = m_texUVPlane[3].t.y = maxV;
+
+	PNT_Vertex::SetFVF(device);
+	return device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, &m_texUVPlane[0], sizeof(PNT_Vertex));
 }
 
 HRESULT SimpleDrawer::DrawColorPlane(LPDIRECT3DDEVICE9 device, const D3DCOLOR & color)

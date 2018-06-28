@@ -30,6 +30,7 @@ private:
 	
 private:
 	PNT_Vertex m_texPlane[4];
+	PNT_Vertex m_texUVPlane[4];
 	PC_Vertex m_colorPlane[4];
 	PC_Vertex m_frame[5];
 	PC_Vertex m_lineX[2];
@@ -37,6 +38,7 @@ private:
 
 public:
 	HRESULT DrawTexPlane(LPDIRECT3DDEVICE9 device);
+	HRESULT DrawTexPlane(LPDIRECT3DDEVICE9 device, float minU, float minV, float maxU, float maxV);
 	HRESULT DrawColorPlane(LPDIRECT3DDEVICE9 device, const D3DCOLOR& color);
 	HRESULT DrawFrame(LPDIRECT3DDEVICE9 device, const D3DCOLOR& color);
 	inline HRESULT DrawLineX(LPDIRECT3DDEVICE9 device, const D3DCOLOR& color)	{ return DrawLine(device, color, m_lineX); }
