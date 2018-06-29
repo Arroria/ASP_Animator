@@ -49,19 +49,21 @@ void MainLoop::Update()
 
 bool MainLoop::Render()
 {
-	ASP* asp = SingletonInstance(ASP_Reader)->FindASP(L"Test");
+	ASP_Texture* asp = SingletonInstance(ASP_Reader)->FindASP(L"Test");
 	if (asp)
 	{
-		const ASPP* aspp = nullptr;
-		if (g_inputDevice.IsKeyPressed(VK_F1))	aspp = &asp->asp[L"temp1"];
-		if (g_inputDevice.IsKeyPressed(VK_F2))	aspp = &asp->asp[L"temp2"];
-		if (g_inputDevice.IsKeyPressed(VK_F3))	aspp = &asp->asp[L"temp3"];
-		if (g_inputDevice.IsKeyPressed(VK_F4))	aspp = &asp->asp[L"temp4"];
+		ASP_Sprite* aspp = nullptr;
+		if (g_inputDevice.IsKeyPressed(VK_F1))	aspp = asp->spriteList[L"temp1"];
+		if (g_inputDevice.IsKeyPressed(VK_F2))	aspp = asp->spriteList[L"temp2"];
+		if (g_inputDevice.IsKeyPressed(VK_F3))	aspp = asp->spriteList[L"temp3"];
+		if (g_inputDevice.IsKeyPressed(VK_F4))	aspp = asp->spriteList[L"temp4"];
 		
 		if (aspp)
 		{
-			DEVICE->SetTexture(0, asp->tex);
-			SingletonInstance(SimpleDrawer)->DrawTexPlane(DEVICE, aspp->minU, aspp->minV, aspp->maxU, aspp->maxV);
+			const ASP_UV& uv = aspp->UVData();
+
+			DEVICE->SetTexture(0, *asp);
+			SingletonInstance(SimpleDrawer)->DrawTexPlane(DEVICE, uv.minU, uv.minV, uv.maxU, uv.maxV);
 		}
 	}
 

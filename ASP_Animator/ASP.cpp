@@ -10,50 +10,72 @@ ASP_Reader::~ASP_Reader()
 }
 
 
-
-ASP * ASP_Reader::RegistASP(const std::wstring& key, const std::experimental::filesystem::path & texPath, const std::experimental::filesystem::path & aspPath)
+ASP_Texture * ASP_Reader::RegistASP(const std::wstring& key, const std::experimental::filesystem::path & texPath, const std::experimental::filesystem::path & aspPath)
 {
-	ASP* asp = nullptr;
-	if (!(asp = new ASP))
+	//Create Texture
+	LPDIRECT3DTEXTURE9 texture = nullptr;
+	D3DXIMAGE_INFO texInfo;
+
+	if (FAILED( D3DXCreateTextureFromFileExW(DEVICE, texPath.wstring().data(), D3DX_DEFAULT_NONPOW2, D3DX_DEFAULT_NONPOW2, NULL, NULL, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, D3DX_DEFAULT, D3DX_DEFAULT, NULL, &texInfo, nullptr, &texture) ))
 		return nullptr;
-	
-	D3DXCreateTextureFromFileExW(DEVICE, L"./Resource/test.png", D3DX_DEFAULT_NONPOW2, D3DX_DEFAULT_NONPOW2, NULL, NULL, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, D3DX_DEFAULT, D3DX_DEFAULT, NULL, &asp->info, nullptr, &asp->tex);
-	if (!asp->tex)
-		return nullptr;
-	
-	std::wfstream fstream;
-	fstream.imbue(std::locale("kor"));
-	fstream.open(L"./Resource/test.asp", std::ios::in);
-	while (!fstream.eof())
+
+
+	//Create ASP Texture
+	ASP_Texture* aspTex = nullptr;
+	if (aspTex = new ASP_Texture(texture, texInfo))
 	{
-		std::wstring temp;
-		fstream >> temp;
-		if (temp.empty())
-			continue;
-		wcout << temp << endl;
+		//Open File
+		std::wfstream fstream;
+		fstream.imbue(std::locale("kor"));
+		fstream.open(aspPath, std::ios::in);
+		if (fstream.fail())
+		{
+			delete aspTex;
+			aspTex = nullptr;
+		}
+		else
+		{
+			//Create ASP Sprite
+			while (!fstream.eof())
+			{
+				std::wstring spriteKey;
+				ASP_UV uv;
+				{
+					fstream >> spriteKey;
+					if (spriteKey.empty())
+						continue;
 
-		ASPP aspp;
-		fstream
-			>> aspp.minU
-			>> aspp.minV
-			>> aspp.maxU
-			>> aspp.maxV;
+					fstream
+						>> uv.minU
+						>> uv.minV
+						>> uv.maxU
+						>> uv.maxV;
+				}
 
-		(aspp.minU /= asp->info.Width) += 1.f / (1 << 16);
-		(aspp.maxU /= asp->info.Width);
-		(aspp.minV /= asp->info.Height) += 1.f / (1 << 16);
-		(aspp.maxV /= asp->info.Height);
+				constexpr size_t OffsetSize = 16;
+				(uv.minU /= texInfo.Width) += 1.f / (1 << OffsetSize);
+				(uv.maxU /= texInfo.Width);
+				(uv.minV /= texInfo.Height) += 1.f / (1 << OffsetSize);
+				(uv.maxV /= texInfo.Height);
 
-		asp->asp.insert(std::make_pair(temp, aspp));
+				ASP_Sprite* aspSprite = new ASP_Sprite(aspTex->texture, aspTex->texInfo, uv);
+				aspTex->spriteList.insert(std::make_pair(spriteKey, aspSprite));
+			}
+		}
+		fstream.close();
+
+		if (aspTex)
+			m_asp.insert(std::make_pair( key, aspTex ));
 	}
-	m_asp.insert(std::make_pair(key, asp));
-	return asp;
+	texture->Release();
+	return aspTex;
 }
 
-ASP * ASP_Reader::FindASP(const std::wstring & key)
+ASP_Texture * ASP_Reader::FindASP(const std::wstring & key)
 {
 	auto findIter = m_asp.find(key);
 	if (findIter == m_asp.end())
 		return nullptr;
 	return findIter->second;
 }
+
