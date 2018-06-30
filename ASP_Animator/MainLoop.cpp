@@ -4,7 +4,10 @@
 
 
 #include "ASP.h"
+#include "ASP_Animator.h"
 
+ASP_AnimeSample* animeSample;
+ASP_Animation* anima;
 
 bool MainLoop::Initialize()
 {
@@ -36,6 +39,19 @@ bool MainLoop::Initialize()
 
 
 	SingletonInstance(ASP_Reader)->RegistASP(L"Test", L"./Resource/test.png", L"./Resource/test.asp");
+	ASP_Texture* asp = SingletonInstance(ASP_Reader)->FindASP(L"Test");
+	if (asp)
+	{
+		ASP_Sprite* aspp = nullptr;
+		animeSample = new ASP_AnimeSample;
+		animeSample->resize(4);
+		(*animeSample)[0] = ASP_AnimeNode((*asp)(L"temp1"), 120);
+		(*animeSample)[1] = ASP_AnimeNode((*asp)(L"temp2"), 120);
+		(*animeSample)[2] = ASP_AnimeNode((*asp)(L"temp3"), 120);
+		(*animeSample)[3] = ASP_AnimeNode((*asp)(L"temp4"), 120);
+
+		anima = new ASP_Animation(animeSample);
+	}
 	return true;
 }
 
@@ -43,6 +59,7 @@ void MainLoop::Update()
 {
 	g_inputDevice.BeginFrame(g_processManager->GetWndInfo()->hWnd);
 
+	++(*anima);
 
 	g_inputDevice.EndFrame();
 }
@@ -52,12 +69,14 @@ bool MainLoop::Render()
 	ASP_Texture* asp = SingletonInstance(ASP_Reader)->FindASP(L"Test");
 	if (asp)
 	{
-		ASP_Sprite* aspp = nullptr;
-		if (g_inputDevice.IsKeyPressed(VK_F1))	aspp = asp->spriteList[L"temp1"];
-		if (g_inputDevice.IsKeyPressed(VK_F2))	aspp = asp->spriteList[L"temp2"];
-		if (g_inputDevice.IsKeyPressed(VK_F3))	aspp = asp->spriteList[L"temp3"];
-		if (g_inputDevice.IsKeyPressed(VK_F4))	aspp = asp->spriteList[L"temp4"];
+		///ASP_Sprite* aspp = nullptr;
+		///if (g_inputDevice.IsKeyPressed(VK_F1))	aspp = (*asp)(L"temp1");
+		///if (g_inputDevice.IsKeyPressed(VK_F2))	aspp = (*asp)(L"temp2");
+		///if (g_inputDevice.IsKeyPressed(VK_F3))	aspp = (*asp)(L"temp3");
+		///if (g_inputDevice.IsKeyPressed(VK_F4))	aspp = (*asp)(L"temp4");
 		
+		const ASP_Sprite* aspp = (*anima)();
+
 		if (aspp)
 		{
 			const ASP_UV& uv = aspp->UVData();

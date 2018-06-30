@@ -150,6 +150,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ASP.h" />
+    <ClInclude Include="ASP_Animator.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="MainLoop.h" />
     <ClInclude Include="ProcessManager.h" />
@@ -161,6 +162,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ASP.cpp" />
+    <ClCompile Include="ASP_Animator.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainLoop.cpp" />
     <ClCompile Include="ProcessManager.cpp" />

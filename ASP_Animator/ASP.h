@@ -22,6 +22,8 @@ public:
 	std::map<std::wstring, ASP_Sprite*> spriteList;
 
 public:
+	ASP_Sprite * operator() (const std::wstring& key) { return spriteList[key]; }
+
 	inline operator LPDIRECT3DTEXTURE9() { return texture; }
 	ASP_Texture() : texture(nullptr) { ZeroMemory(&texInfo, sizeof(D3DXIMAGE_INFO)); }
 	ASP_Texture(LPDIRECT3DTEXTURE9 _texture, const D3DXIMAGE_INFO& _texInfo) : texture(_texture), texInfo(_texInfo) { texture->AddRef(); }
@@ -36,8 +38,8 @@ private:
 	ASP_UV uv;
 
 public:
-	inline operator LPDIRECT3DTEXTURE9() { return texture; }
-	inline LPDIRECT3DTEXTURE9 Texture() { return texture; }
+	inline operator LPDIRECT3DTEXTURE9() const { return texture; }
+	inline LPDIRECT3DTEXTURE9 Texture() const { return texture; }
 	inline const D3DXIMAGE_INFO& Info() const { return texInfo; }
 	inline const ASP_UV& UVData()		const { return uv; }
 
@@ -45,6 +47,7 @@ public:
 	ASP_Sprite(LPDIRECT3DTEXTURE9 _texture, D3DXIMAGE_INFO& _texInfo, const ASP_UV& _uv) : texture(_texture), texInfo(_texInfo), uv(_uv) { texture->AddRef(); }
 	~ASP_Sprite() { texture->Release(); }
 };
+
 
 
 #include <filesystem>
