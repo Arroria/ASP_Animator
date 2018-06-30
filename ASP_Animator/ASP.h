@@ -44,7 +44,7 @@ public:
 	inline const ASP_UV& UVData()		const { return uv; }
 
 public:
-	ASP_Sprite(LPDIRECT3DTEXTURE9 _texture, D3DXIMAGE_INFO& _texInfo, const ASP_UV& _uv) : texture(_texture), texInfo(_texInfo), uv(_uv) { texture->AddRef(); }
+	ASP_Sprite(LPDIRECT3DTEXTURE9& _texture, D3DXIMAGE_INFO& _texInfo, const ASP_UV& _uv) : texture(_texture), texInfo(_texInfo), uv(_uv) { texture->AddRef(); }
 	~ASP_Sprite() { texture->Release(); }
 };
 

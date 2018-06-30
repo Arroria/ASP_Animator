@@ -6,8 +6,8 @@
 #include "ASP.h"
 #include "ASP_Animator.h"
 
-ASP_AnimeSample* animeSample;
-ASP_Animation* anima;
+ASP_AnimeSample* animeSamples[5];
+ASP_Animation anima;
 
 bool MainLoop::Initialize()
 {
@@ -38,19 +38,57 @@ bool MainLoop::Initialize()
 	DEVICE->SetRenderState(D3DRS_ZWRITEENABLE, false);
 
 
-	SingletonInstance(ASP_Reader)->RegistASP(L"Test", L"./Resource/test.png", L"./Resource/test.asp");
-	ASP_Texture* asp = SingletonInstance(ASP_Reader)->FindASP(L"Test");
+	SingletonInstance(ASP_Reader)->RegistASP(L"Reisen", L"./Resource/pl03.png", L"./Resource/pl03.asp");
+	ASP_Texture* asp = SingletonInstance(ASP_Reader)->FindASP(L"Reisen");
 	if (asp)
 	{
 		ASP_Sprite* aspp = nullptr;
-		animeSample = new ASP_AnimeSample;
-		animeSample->resize(4);
-		(*animeSample)[0] = ASP_AnimeNode((*asp)(L"temp1"), 120);
-		(*animeSample)[1] = ASP_AnimeNode((*asp)(L"temp2"), 120);
-		(*animeSample)[2] = ASP_AnimeNode((*asp)(L"temp3"), 120);
-		(*animeSample)[3] = ASP_AnimeNode((*asp)(L"temp4"), 120);
 
-		anima = new ASP_Animation(animeSample);
+		animeSamples[0] = new ASP_AnimeSample;
+		ASP_AnimeSample* animeSample = animeSamples[0];
+		animeSample->resize(8);
+		(*animeSample)[0] = ASP_AnimeNode((*asp)(L"p00"), 20);
+		(*animeSample)[1] = ASP_AnimeNode((*asp)(L"p01"), 20);
+		(*animeSample)[2] = ASP_AnimeNode((*asp)(L"p02"), 20);
+		(*animeSample)[3] = ASP_AnimeNode((*asp)(L"p03"), 20);
+		(*animeSample)[4] = ASP_AnimeNode((*asp)(L"p04"), 20);
+		(*animeSample)[5] = ASP_AnimeNode((*asp)(L"p05"), 20);
+		(*animeSample)[6] = ASP_AnimeNode((*asp)(L"p06"), 20);
+		(*animeSample)[7] = ASP_AnimeNode((*asp)(L"p07"), 20);
+
+		animeSamples[1] = new ASP_AnimeSample;
+		animeSample = animeSamples[1];
+		animeSample->resize(4);
+		(*animeSample)[0] = ASP_AnimeNode((*asp)(L"p10"), 20);
+		(*animeSample)[1] = ASP_AnimeNode((*asp)(L"p11"), 20);
+		(*animeSample)[2] = ASP_AnimeNode((*asp)(L"p12"), 20);
+		(*animeSample)[3] = ASP_AnimeNode((*asp)(L"p13"), 20);
+
+		animeSamples[2] = new ASP_AnimeSample;
+		animeSample = animeSamples[2];
+		animeSample->resize(4);
+		(*animeSample)[0] = ASP_AnimeNode((*asp)(L"p14"), 20);
+		(*animeSample)[1] = ASP_AnimeNode((*asp)(L"p15"), 20);
+		(*animeSample)[2] = ASP_AnimeNode((*asp)(L"p16"), 20);
+		(*animeSample)[3] = ASP_AnimeNode((*asp)(L"p17"), 20);
+
+		animeSamples[3] = new ASP_AnimeSample;
+		animeSample = animeSamples[3];
+		animeSample->resize(4);
+		(*animeSample)[0] = ASP_AnimeNode((*asp)(L"p20"), 20);
+		(*animeSample)[1] = ASP_AnimeNode((*asp)(L"p21"), 20);
+		(*animeSample)[2] = ASP_AnimeNode((*asp)(L"p22"), 20);
+		(*animeSample)[3] = ASP_AnimeNode((*asp)(L"p23"), 20);
+
+		animeSamples[4] = new ASP_AnimeSample;
+		animeSample = animeSamples[4];
+		animeSample->resize(4);
+		(*animeSample)[0] = ASP_AnimeNode((*asp)(L"p24"), 20);
+		(*animeSample)[1] = ASP_AnimeNode((*asp)(L"p25"), 20);
+		(*animeSample)[2] = ASP_AnimeNode((*asp)(L"p26"), 20);
+		(*animeSample)[3] = ASP_AnimeNode((*asp)(L"p27"), 20);
+
+		anima = animeSamples[0];
 	}
 	return true;
 }
@@ -59,23 +97,24 @@ void MainLoop::Update()
 {
 	g_inputDevice.BeginFrame(g_processManager->GetWndInfo()->hWnd);
 
-	++(*anima);
+	++anima;
 
 	g_inputDevice.EndFrame();
 }
 
 bool MainLoop::Render()
 {
-	ASP_Texture* asp = SingletonInstance(ASP_Reader)->FindASP(L"Test");
+	ASP_Texture* asp = SingletonInstance(ASP_Reader)->FindASP(L"Reisen");
 	if (asp)
 	{
-		///ASP_Sprite* aspp = nullptr;
-		///if (g_inputDevice.IsKeyPressed(VK_F1))	aspp = (*asp)(L"temp1");
-		///if (g_inputDevice.IsKeyPressed(VK_F2))	aspp = (*asp)(L"temp2");
-		///if (g_inputDevice.IsKeyPressed(VK_F3))	aspp = (*asp)(L"temp3");
-		///if (g_inputDevice.IsKeyPressed(VK_F4))	aspp = (*asp)(L"temp4");
+		const ASP_Sprite* aspp = nullptr;
+		if (g_inputDevice.IsKeyPressed(VK_F1))			anima = animeSamples[0];
+		if (g_inputDevice.IsKeyPressed(VK_F2))			anima = animeSamples[1];
+		if (g_inputDevice.IsKeyPressed(VK_F3))			anima = animeSamples[2];
+		if (g_inputDevice.IsKeyPressed(VK_F4))			anima = animeSamples[3];
+		if (g_inputDevice.IsKeyPressed(VK_F5))			anima = animeSamples[4];
+		aspp = anima();
 		
-		const ASP_Sprite* aspp = (*anima)();
 
 		if (aspp)
 		{

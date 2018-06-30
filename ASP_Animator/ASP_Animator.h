@@ -23,7 +23,8 @@ public:
 public:
 	ASP_Animation * operator++()
 	{
-		if (++m_time >= (*m_animeSample)[m_index].duration)
+		if (m_animeSample &&
+			++m_time >= (*m_animeSample)[m_index].duration)
 		{
 			m_time = 0;
 			if (++m_index >= m_animeSample->size())
@@ -36,11 +37,15 @@ public:
 
 	const ASP_Sprite * operator()() const
 	{
-		return (*m_animeSample)[m_index].aspSprite;
+		return m_animeSample ?
+			(*m_animeSample)[m_index].aspSprite :
+			nullptr;
 	};
 
 public:
+	ASP_Animation() : m_animeSample(nullptr), m_index(NULL), m_time(NULL) {}
 	ASP_Animation(ASP_AnimeSample* animeSample) : m_animeSample(animeSample), m_index(0), m_time(0) {}
+	ASP_Animation & operator=(ASP_AnimeSample* animeSample) { return *this = ASP_Animation(animeSample); }
 };
 
 class ASP_Animator
