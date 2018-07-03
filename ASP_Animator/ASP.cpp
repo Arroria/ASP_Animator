@@ -2,15 +2,8 @@
 #include "ASP.h"
 
 
-ASP_Reader::ASP_Reader()
-{
-}
-ASP_Reader::~ASP_Reader()
-{
-}
 
-
-ASP_Texture * ASP_Reader::RegistASP(const std::wstring& key, const std::experimental::filesystem::path & texPath, const std::experimental::filesystem::path & aspPath)
+ASP_Texture * ASP_Texture::Create(LPDIRECT3DDEVICE9 device, const std::experimental::filesystem::path & texPath, const std::experimental::filesystem::path & aspPath)
 {
 	//Create Texture
 	LPDIRECT3DTEXTURE9 texture = nullptr;
@@ -63,19 +56,7 @@ ASP_Texture * ASP_Reader::RegistASP(const std::wstring& key, const std::experime
 			}
 		}
 		fstream.close();
-
-		if (aspTex)
-			m_asp.insert(std::make_pair( key, aspTex ));
 	}
 	texture->Release();
 	return aspTex;
 }
-
-ASP_Texture * ASP_Reader::FindASP(const std::wstring & key)
-{
-	auto findIter = m_asp.find(key);
-	if (findIter == m_asp.end())
-		return nullptr;
-	return findIter->second;
-}
-

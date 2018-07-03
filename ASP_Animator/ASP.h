@@ -1,6 +1,6 @@
 #pragma once
+#include <filesystem>
 
-class ASP_Reader;
 struct ASP_UV
 {
 	float minU;
@@ -15,8 +15,10 @@ struct ASP_UV
 class ASP_Sprite;
 class ASP_Texture
 {
-	friend ASP_Reader;
 public:
+	static ASP_Texture* Create(LPDIRECT3DDEVICE9 device, const std::experimental::filesystem::path& texPath, const std::experimental::filesystem::path& aspPath);
+
+private:
 	LPDIRECT3DTEXTURE9 texture;
 	D3DXIMAGE_INFO texInfo;
 	std::map<std::wstring, ASP_Sprite*> spriteList;
@@ -47,24 +49,4 @@ public:
 	ASP_Sprite(LPDIRECT3DTEXTURE9& _texture, D3DXIMAGE_INFO& _texInfo, const ASP_UV& _uv) : texture(_texture), texInfo(_texInfo), uv(_uv) { texture->AddRef(); }
 	~ASP_Sprite() { texture->Release(); }
 };
-
-
-
-#include <filesystem>
-#include "Singleton.h"
-class ASP_Reader :
-	public Singleton<ASP_Reader>
-{
-private:
-	std::map<std::wstring, ASP_Texture*> m_asp;
-
-public:
-	ASP_Texture * RegistASP(const std::wstring& key, const std::experimental::filesystem::path& texPath, const std::experimental::filesystem::path& aspPath);
-	ASP_Texture * FindASP(const std::wstring& key);
-
-public:
-	ASP_Reader();
-	~ASP_Reader();
-};
-
 

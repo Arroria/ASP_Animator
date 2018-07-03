@@ -6,8 +6,8 @@
 #include "ASP.h"
 #include "ASP_Animator.h"
 
-ASP_AnimeSample* animeSamples[5];
 ASP_Animation anima;
+ASP_Animated* animated;
 
 bool MainLoop::Initialize()
 {
@@ -38,14 +38,12 @@ bool MainLoop::Initialize()
 	DEVICE->SetRenderState(D3DRS_ZWRITEENABLE, false);
 
 
-	SingletonInstance(ASP_Reader)->RegistASP(L"Reisen", L"./Resource/pl03.png", L"./Resource/pl03.asp");
-	ASP_Texture* asp = SingletonInstance(ASP_Reader)->FindASP(L"Reisen");
+	ASP_Texture* asp = ASP_Texture::Create(DEVICE, L"./Resource/pl03.png", L"./Resource/pl03.asp");
 	if (asp)
 	{
-		ASP_Sprite* aspp = nullptr;
+		animated = new ASP_Animated(asp);
 
-		animeSamples[0] = new ASP_AnimeSample;
-		ASP_AnimeSample* animeSample = animeSamples[0];
+		ASP_AnimeSample* animeSample = new ASP_AnimeSample;
 		animeSample->resize(8);
 		(*animeSample)[0] = ASP_AnimeNode((*asp)(L"p00"), 20);
 		(*animeSample)[1] = ASP_AnimeNode((*asp)(L"p01"), 20);
@@ -55,40 +53,40 @@ bool MainLoop::Initialize()
 		(*animeSample)[5] = ASP_AnimeNode((*asp)(L"p05"), 20);
 		(*animeSample)[6] = ASP_AnimeNode((*asp)(L"p06"), 20);
 		(*animeSample)[7] = ASP_AnimeNode((*asp)(L"p07"), 20);
+		animated->RegistAnimeSample(L"0", animeSample);
 
-		animeSamples[1] = new ASP_AnimeSample;
-		animeSample = animeSamples[1];
+		
+		animeSample = new ASP_AnimeSample;
 		animeSample->resize(4);
 		(*animeSample)[0] = ASP_AnimeNode((*asp)(L"p10"), 20);
 		(*animeSample)[1] = ASP_AnimeNode((*asp)(L"p11"), 20);
 		(*animeSample)[2] = ASP_AnimeNode((*asp)(L"p12"), 20);
 		(*animeSample)[3] = ASP_AnimeNode((*asp)(L"p13"), 20);
+		animated->RegistAnimeSample(L"1", animeSample);
 
-		animeSamples[2] = new ASP_AnimeSample;
-		animeSample = animeSamples[2];
+		animeSample = new ASP_AnimeSample;
 		animeSample->resize(4);
 		(*animeSample)[0] = ASP_AnimeNode((*asp)(L"p14"), 20);
 		(*animeSample)[1] = ASP_AnimeNode((*asp)(L"p15"), 20);
 		(*animeSample)[2] = ASP_AnimeNode((*asp)(L"p16"), 20);
 		(*animeSample)[3] = ASP_AnimeNode((*asp)(L"p17"), 20);
+		animated->RegistAnimeSample(L"2", animeSample);
 
-		animeSamples[3] = new ASP_AnimeSample;
-		animeSample = animeSamples[3];
+		animeSample = new ASP_AnimeSample;
 		animeSample->resize(4);
 		(*animeSample)[0] = ASP_AnimeNode((*asp)(L"p20"), 20);
 		(*animeSample)[1] = ASP_AnimeNode((*asp)(L"p21"), 20);
 		(*animeSample)[2] = ASP_AnimeNode((*asp)(L"p22"), 20);
 		(*animeSample)[3] = ASP_AnimeNode((*asp)(L"p23"), 20);
+		animated->RegistAnimeSample(L"3", animeSample);
 
-		animeSamples[4] = new ASP_AnimeSample;
-		animeSample = animeSamples[4];
+		animeSample = new ASP_AnimeSample;
 		animeSample->resize(4);
 		(*animeSample)[0] = ASP_AnimeNode((*asp)(L"p24"), 20);
 		(*animeSample)[1] = ASP_AnimeNode((*asp)(L"p25"), 20);
 		(*animeSample)[2] = ASP_AnimeNode((*asp)(L"p26"), 20);
 		(*animeSample)[3] = ASP_AnimeNode((*asp)(L"p27"), 20);
-
-		anima = animeSamples[0];
+		animated->RegistAnimeSample(L"4", animeSample);
 	}
 	return true;
 }
@@ -97,34 +95,34 @@ void MainLoop::Update()
 {
 	g_inputDevice.BeginFrame(g_processManager->GetWndInfo()->hWnd);
 
-	++anima;
+
+	const ASP_Sprite* aspp = nullptr;
+	if (g_inputDevice.IsKeyDown(VK_F1))			anima = (*animated)(L"0");
+	if (g_inputDevice.IsKeyDown(VK_F2))			anima = (*animated)(L"1");
+	if (g_inputDevice.IsKeyDown(VK_F3))			anima = (*animated)(L"2");
+	if (g_inputDevice.IsKeyDown(VK_F4))			anima = (*animated)(L"3");
+	if (g_inputDevice.IsKeyDown(VK_F5))			anima = (*animated)(L"4");
+	aspp = anima();
+
+
+	if (++anima == ASPAnimeState::End)
+	{
+		if (anima == (*animated)(L"1"))	anima = (*animated)(L"2");
+		if (anima == (*animated)(L"3"))	anima = (*animated)(L"4");
+	}
 
 	g_inputDevice.EndFrame();
 }
 
 bool MainLoop::Render()
 {
-	ASP_Texture* asp = SingletonInstance(ASP_Reader)->FindASP(L"Reisen");
-	if (asp)
+	if (anima())
 	{
-		const ASP_Sprite* aspp = nullptr;
-		if (g_inputDevice.IsKeyPressed(VK_F1))			anima = animeSamples[0];
-		if (g_inputDevice.IsKeyPressed(VK_F2))			anima = animeSamples[1];
-		if (g_inputDevice.IsKeyPressed(VK_F3))			anima = animeSamples[2];
-		if (g_inputDevice.IsKeyPressed(VK_F4))			anima = animeSamples[3];
-		if (g_inputDevice.IsKeyPressed(VK_F5))			anima = animeSamples[4];
-		aspp = anima();
-		
+		const ASP_UV& uv = anima()->UVData();
 
-		if (aspp)
-		{
-			const ASP_UV& uv = aspp->UVData();
-
-			DEVICE->SetTexture(0, *asp);
-			SingletonInstance(SimpleDrawer)->DrawTexPlane(DEVICE, uv.minU, uv.minV, uv.maxU, uv.maxV);
-		}
+		DEVICE->SetTexture(0, anima()->Texture());
+		SingletonInstance(SimpleDrawer)->DrawTexPlane(DEVICE, uv.minU, uv.minV, uv.maxU, uv.maxV);
 	}
-
 	return true;
 }
 

@@ -11,6 +11,13 @@ struct ASP_AnimeNode
 };
 
 using ASP_AnimeSample = std::vector<ASP_AnimeNode>;
+
+enum class ASPAnimeState
+{
+	Nothing,
+	NextFrame,
+	End,
+};
 class ASP_Animation
 {
 private:
@@ -21,7 +28,7 @@ public:
 	size_t m_time;
 
 public:
-	ASP_Animation * operator++()
+	ASPAnimeState operator++()
 	{
 		if (m_animeSample &&
 			++m_time >= (*m_animeSample)[m_index].duration)
@@ -30,9 +37,16 @@ public:
 			if (++m_index >= m_animeSample->size())
 			{
 				m_index = 0;
+				return ASPAnimeState::End;
 			}
+			return ASPAnimeState::NextFrame;
 		}
-		return this;
+		return ASPAnimeState::Nothing;
+	};
+
+	bool operator==(const ASP_Animation& animation) const
+	{
+		return m_animeSample == animation.m_animeSample;
 	};
 
 	const ASP_Sprite * operator()() const
@@ -46,11 +60,24 @@ public:
 	ASP_Animation() : m_animeSample(nullptr), m_index(NULL), m_time(NULL) {}
 	ASP_Animation(ASP_AnimeSample* animeSample) : m_animeSample(animeSample), m_index(0), m_time(0) {}
 	ASP_Animation & operator=(ASP_AnimeSample* animeSample) { return *this = ASP_Animation(animeSample); }
+	// 동적할당하면 위에 생성자 작동안할줄 알고 만들었는데 혹시나해서 테스트하니 잘되가지고 필요없어진 코드 //ASP_Animation & operator=(ASP_AnimeSample* animeSample) { m_animeSample = animeSample; m_index = 0, m_time = 0; return *this; }
 };
 
-class ASP_Animator
+
+
+class ASP_Animated
 {
+private:
+	ASP_Texture * m_aspTex;
+	std::map<std::wstring, ASP_AnimeSample*> m_aspAnimeSample;
+
 public:
-	ASP_Animator();
-	~ASP_Animator();
+	bool RegistAnimeSample(const std::wstring& key, ASP_AnimeSample* animeSample);
+	
+	ASP_Texture * aspTex() { return m_aspTex; }
+	ASP_AnimeSample * operator() (const std::wstring& key);
+
+public:
+	ASP_Animated(ASP_Texture* aspTex);
+	~ASP_Animated();
 };
